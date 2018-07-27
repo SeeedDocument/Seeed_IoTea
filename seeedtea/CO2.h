@@ -8,10 +8,8 @@
 #else
 	#include "WProgram.h"
 #endif
-extern int CO2PPM;
-extern int CO2_temp;
 extern void CO2_init(void);
-extern bool CO2_dataRecieve(void);
+extern unsigned int CO2_dataRecieve(void);
 
 
 #endif

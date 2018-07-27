@@ -20,12 +20,13 @@ Author:	zxd
 #include "Oxygen.h"
 
 //宏开关，注释后会停止相应模块工作
-//#define LORA_RUN
-//#define SENSOR_RUN
+#define LORA_RUN
+#define SENSOR_RUN
 
 //系统运行时间，用于低功耗控制
 unsigned long system_time = 0;		//存储上次运行时间
-#define interval_time 600			//间隔时间，秒
+#define interval_time 180			//间隔时间，秒
+#define Preheat_time 30000			//Dust Sensor预热时间
 
 #define dataPin 6 //土壤水分和温度传感器数据引脚
 #define clockPin 7 //土壤水分和温度传感器时钟引脚
@@ -53,18 +54,33 @@ SHT1x sht1x(dataPin, clockPin);
 BME280 bme280;
 const unsigned char data_length = 15;
 unsigned char Lora_data[15] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,11,12,13,0,0 };
+int temp; //温度
+int hum;  //湿度
+int pressure; //压力
+int altitude; //海拔
+			  //unsigned int pressure_left;
+			  //unsigned int pressure_right;
+unsigned int altitude_left;
+unsigned int altitude_right;
+int TSL2561_data; //光传感器数据
+int Dust_value; //灰尘数据
+unsigned char o2_value;  //本次氧气数值
+unsigned char last_value = 207;//上次氧气数值
+float soil_temp;//土壤温度
+float soil_humi;//土壤湿度
 
 void setup() {
 	pinMode(2, OUTPUT);		//供外部单片机复位参考
 	pinMode(Air_CtrlPin, OUTPUT);
 	pinMode(Soil_CtrlPin, OUTPUT);
-	digitalWrite(Air_CtrlPin, 0);	//开电源
-	digitalWrite(Soil_CtrlPin, 0);
+	digitalWrite(Air_CtrlPin, 1);	//关电源
+	digitalWrite(Soil_CtrlPin, 1);
 	digitalWrite(2, 1);
 	delay(500);
 	digitalWrite(2, 0);
 	Wire.begin();
 	SerialUSB.begin(9600);		//USB
+	power_ctrl_init();
 
 #ifdef SENSOR_RUN
 	CO2_init();
@@ -75,6 +91,10 @@ void setup() {
 	pinMode(Dust_pin, INPUT);
 	pinMode(O2_pin, INPUT);
 	TSL2561.init();		//光照
+#else
+	digitalWrite(Air_CtrlPin, 1);	//关电源
+	delay(200);
+	digitalWrite(Soil_CtrlPin, 1);
 #endif // SENSOR_RUN
 
 #ifdef LORA_RUN
@@ -83,36 +103,25 @@ void setup() {
 	Lora_send(data_length);
 #endif // LORA_RUN
 
-	power_ctrl_init();
+	
 
 	for (int i = 3; i > 0; i--)
 	{
 		digitalWrite(2, 1);
 		delay(500);
 		digitalWrite(2, 0);
+		delay(500);
 	}
 }
 
-int temp; //温度
-int hum;  //湿度
-int pressure; //压力
-int altitude; //海拔
-unsigned int pressure_left;
-unsigned int pressure_right;
-int TSL2561_data; //光传感器数据
-int Dust_value; //灰尘数据
-unsigned char o2_value;  //本次氧气数值
-unsigned char last_value = 207;//上次氧气数值
-float soil_temp;//土壤温度
-float soil_humi;//土壤湿度
 
 // the loop function runs over and over again until power down or reset
 void loop()
 {
 	bool power_state;	//1为电池有电，0为电池没电
 	power_state = power_ctrl();
-	delay(200);
-	
+	SerialUSB.print("power_state = ");
+	SerialUSB.println(power_state);
 #ifdef SENSOR_RUN
 	unsigned long time_2 = 0;
 	bool time_state = 0;
@@ -125,14 +134,18 @@ void loop()
 		if (time_2 >= interval_time)
 			time_state = 1;
 	}
-
-	system_time = millis();
-
+	
+	SerialUSB.print("time_state = ");
+	SerialUSB.println(time_state);
 	if (power_state == 1 && time_state == 1)
 	{
+		system_time = millis();
+		SerialUSB.println("Sensor power on!");
 		digitalWrite(Air_CtrlPin, 0);	//开电源
 		digitalWrite(Soil_CtrlPin, 0);
+		delay(3000);
 		get_AllSensorData();
+		SerialUSB.println("Sensor power off!");
 		digitalWrite(Air_CtrlPin, 1);	//关电源
 		digitalWrite(Soil_CtrlPin, 1);
 #ifdef LORA_RUN
@@ -141,8 +154,9 @@ void loop()
 	}
 	else
 	{
-		delay(60000);
+		delay(6000);
 	}
+	SerialUSB.println("finish loop");
 #else
 	delay(1000);
 #endif // SENSOR_RUN
@@ -158,11 +172,17 @@ bool get_AllSensorData()	//获取所有传感器的数据
 {
 	unsigned long D_time;	//为Dust Sensor记录上电时间
 	D_time = millis();
+	SerialUSB.println("get_BME280_data");
 	get_BME280_data();
+	SerialUSB.println("get_CO2_data");
 	get_CO2_data();
-	get_Light_data();
+	SerialUSB.println(get_Light_data());
+	
+	SerialUSB.println("get_O2_data");
 	get_O2_data();
+	SerialUSB.println("get_soil_data");
 	get_soil_data();
+	SerialUSB.println("get_Dust_data");
 
 	/*****************************************************************/
 	//获取电压数据
@@ -170,13 +190,15 @@ bool get_AllSensorData()	//获取所有传感器的数据
 	Lora_data[13] = get_voltage();
 	/*****************************************************************/
 
-	while ((millis() - D_time) < 30000)		//等待预热时间
+	while ((millis() - D_time) < Preheat_time)		//等待预热时间
 	{
 		delay(100);
 	}
 	get_Dust_data();
+	SerialUSB.println("get_Dust_data OK");
 	//发送数据
 	return 1;
+	
 }
 
 void get_BME280_data()
@@ -185,17 +207,21 @@ void get_BME280_data()
 	//获取温湿度气压传感器数据
 	//Lora_data[0]:温度,Lora_data[1]:湿度,Lora_data[2_3]:气压
 	//错误代码Lora_data[14] bit0,1：error，0：no_error
+	delay(2000);
+	bme280.init();
+	delay(200);
 	temp = bme280.getTemperature();
 	if (temp != 0)
 	{
 		hum = bme280.getHumidity();
 		pressure = bme280.getPressure();
-		pressure_right = pressure & 0x00ff;
-		pressure_left = pressure >> 8;
+		altitude = bme280.calcAltitude(pressure);
+		altitude_right = altitude & 0x00ff;
+		altitude_left = altitude >> 8;
 		Lora_data[0] = temp & 0x00ff;		//空气湿度
 		Lora_data[1] = hum & 0x00ff;		//空气湿度
-		Lora_data[2] = pressure_left;		//气压高8位
-		Lora_data[3] = pressure_right;		//气压低8位
+		Lora_data[2] = altitude_left;		//海拔高8位
+		Lora_data[3] = altitude_right;		//海拔低8位
 		Lora_data[14] = Lora_data[14] & (~(1 << bme280_error)); //错误位清0
 	}
 	else
@@ -218,7 +244,9 @@ void get_CO2_data()
 	//获取CO2传感器数据
 	//Lora_data[4_5]:CO2浓度
 	//错误代码Lora_data[14] bit1,1：error，0：no_error
-	if (CO2_dataRecieve())
+	unsigned int CO2PPM = 0;
+	CO2PPM = CO2_dataRecieve();
+	if (CO2PPM != 0)
 	{
 		Lora_data[4] = CO2PPM >> 8;			//CO2高8位
 		Lora_data[5] = CO2PPM & 0x00ff;		//CO2低8位
@@ -232,7 +260,7 @@ void get_CO2_data()
 		SerialUSB.println("CO2_ERROR");
 		SerialUSB.println();
 	}
-	delay(1000);
+	delay(100);
 	/*****************************************************************/
 }
 
@@ -264,12 +292,15 @@ void get_Dust_data()
 	/*****************************************************************/
 }
 
-void get_Light_data()
+int get_Light_data()
 {
 	/*****************************************************************/
 	//获取光照传感器数据
 	//Lora_data[8_9]:光照
 	//错误代码Lora_data[14] bit3,1：error，0：no_error
+	delay(2000);
+	TSL2561.init();
+	delay(100);
 	TSL2561_data = TSL2561.readVisibleLux();
 	//SerialUSB.println(TSL2561.readVisibleLux());
 	if ((TSL2561_data >= TSL2561_data_low) && (TSL2561_data <= TSL2561_data_high))//判断光照是否在正常范围
@@ -288,6 +319,7 @@ void get_Light_data()
 		SerialUSB.println();
 	}
 	delay(1000);
+	return TSL2561_data;
 	/*****************************************************************/
 }
 

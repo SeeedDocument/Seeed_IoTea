@@ -25,7 +25,7 @@ Author:	zxd
 
 //系统运行时间，用于低功耗控制
 unsigned long system_time = 0;		//存储上次运行时间
-#define interval_time 180			//间隔时间，秒
+#define interval_time 600			//间隔时间，秒
 #define Preheat_time 30000			//Dust Sensor预热时间
 
 #define dataPin 6 //土壤水分和温度传感器数据引脚
@@ -73,6 +73,8 @@ void setup() {
 	pinMode(2, OUTPUT);		//供外部单片机复位参考
 	pinMode(Air_CtrlPin, OUTPUT);
 	pinMode(Soil_CtrlPin, OUTPUT);
+	pinMode(Dust_pin, INPUT);
+	pinMode(O2_pin, INPUT);
 	digitalWrite(Air_CtrlPin, 1);	//关电源
 	digitalWrite(Soil_CtrlPin, 1);
 	digitalWrite(2, 1);
@@ -81,21 +83,7 @@ void setup() {
 	Wire.begin();
 	SerialUSB.begin(9600);		//USB
 	power_ctrl_init();
-
-#ifdef SENSOR_RUN
 	CO2_init();
-	if (!bme280.init()) {
-		//SerialUSB.println("bme280 init error!");
-		Lora_data[14] = 1;		//错误代码1：BME280初始化失败
-	}
-	pinMode(Dust_pin, INPUT);
-	pinMode(O2_pin, INPUT);
-	TSL2561.init();		//光照
-#else
-	digitalWrite(Air_CtrlPin, 1);	//关电源
-	delay(200);
-	digitalWrite(Soil_CtrlPin, 1);
-#endif // SENSOR_RUN
 
 #ifdef LORA_RUN
 	Lora_begin();	//Lora_begin();
@@ -103,9 +91,7 @@ void setup() {
 	Lora_send(data_length);
 #endif // LORA_RUN
 
-	
-
-	for (int i = 3; i > 0; i--)
+	for (int i = 3; i > 0; i--)		//Blink LED
 	{
 		digitalWrite(2, 1);
 		delay(500);
@@ -122,9 +108,10 @@ void loop()
 	power_state = power_ctrl();
 	SerialUSB.print("power_state = ");
 	SerialUSB.println(power_state);
+
 #ifdef SENSOR_RUN
 	unsigned long time_2 = 0;
-	bool time_state = 0;
+	bool time_state = 0;	//1为时间足够，可以采集数据
 
 	if (0 == system_time)
 		time_state = 1;
@@ -208,7 +195,10 @@ void get_BME280_data()
 	//Lora_data[0]:温度,Lora_data[1]:湿度,Lora_data[2_3]:气压
 	//错误代码Lora_data[14] bit0,1：error，0：no_error
 	delay(2000);
-	bme280.init();
+	if (!bme280.init()) {
+		//SerialUSB.println("bme280 init error!");
+		Lora_data[14] = 1;		//错误代码1：BME280初始化失败
+	}
 	delay(200);
 	temp = bme280.getTemperature();
 	if (temp != 0)

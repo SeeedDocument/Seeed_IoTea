@@ -3,21 +3,21 @@
 // 
 
 #include "Dust_other.h"
-//???Dust Sensor???
+//Dust Sensor
 //const int Dust_pin = 8;		
-#define sampletime_ms 30000		//sampe 30s&nbsp;;
+#define sampletime_ms 30000		//采样时间30s;
 
 float Dust_concentration(void) {
-	unsigned long lowpulseoccupancy = 0;	//??????
-	unsigned long duration;		//???????
-	unsigned long Dust_starttime;	//??????
-	float ratio = 0;			//??
-	float concentration = 0;	//????
-	Dust_starttime = millis();	//??????
+	unsigned long lowpulseoccupancy = 0;	
+	unsigned long duration;		//
+	unsigned long Dust_starttime;	//
+	float ratio = 0;			//
+	float concentration = 0;	//
+	Dust_starttime = millis();	//
 
 	while ((millis() - Dust_starttime) < sampletime_ms)
 	{
-		duration = pulseIn(Dust_pin, LOW);	//??10?
+		duration = pulseIn(Dust_pin, LOW);
 		lowpulseoccupancy = lowpulseoccupancy + duration;
 	}
 	//SerialUSB.print("lowpulseoccupancy=");
@@ -33,20 +33,3 @@ float Dust_concentration(void) {
 		return 0;
 	}
 }
-
-//int O2_value(void) {
-//	long sum = 0;
-//	int out_val = 0;
-//	double voltage = 2.58*0.7429;	//????
-//	for (int i = 0; i<32; i++)
-//	{
-//		sum += analogRead(O2_pin);
-//	}
-//	sum = sum / 32;
-//	out_val = sum * 0.6768 / voltage;
-//	return out_val;
-//}
-
-
-
-

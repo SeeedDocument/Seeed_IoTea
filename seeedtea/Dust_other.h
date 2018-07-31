@@ -10,7 +10,6 @@
 #endif
 //extern const int Dust_pin;
 #define Dust_pin 3
-//#define O2_pin A1
 extern float Dust_concentration(void);
 extern int O2_value(void);
 

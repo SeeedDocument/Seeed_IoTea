@@ -1,7 +1,7 @@
 // Author: zxd    Date:2018/07/23
 // 本库文件用来进行电源管理和温度控制
-// 12V分压电阻：3K和12K       21V分压电阻：3K和18K
-// 
+// 16V分压电阻：3K和12K       23V分压电阻：3K和18K
+
 
 //温控风扇调试。如果装箱就注释掉。
 //#define FAN_ON
@@ -18,7 +18,9 @@
 #define Fan_start_temp 45
 #define Fan_start_light 500
 
+//电源控制引脚，低开高关
 #define Air_CtrlPin 10
+#define Soil_CtrlPin 11
 
 
 //电压都被放大10倍，例如126表示12.6V
@@ -131,14 +133,10 @@ void Fan(bool Fan_state)	//1为开风扇
 {
 	if (Fan_state) {
 		digitalWrite(Fan_pin, 0);	//开风扇
-		//digitalWrite(2, 1);
 	}
-		
 	else {
 		digitalWrite(Fan_pin, 1);
-		//digitalWrite(2, 0);
-	}
-		
+	}	
 }
 
 bool power_ctrl()	//1为电池有电，0为电池没电
@@ -146,15 +144,8 @@ bool power_ctrl()	//1为电池有电，0为电池没电
 	int box_temp = 0;		//箱子温度
 	//int light = 0;			//光线强度
 	bool power_state = 0;	//1为电池有电，0为电池没电
-	/*digitalWrite(Air_CtrlPin, 0);	//开电源
-	box_temp = get_box_temperature();
-	light = get_Light_data();
-	SerialUSB.print("light = ");
-	SerialUSB.println(light);
-	digitalWrite(Air_CtrlPin, 1);	//关电源*/
 	if (box_temp == 0xff)
 		box_temp = 0;
-	
 	get_voltage();
 	Fan(0);
 #ifdef FAN_ON

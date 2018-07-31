@@ -32,9 +32,6 @@ unsigned long system_time = 0;		//存储上次运行时间
 #define clockPin 7 //土壤水分和温度传感器时钟引脚
 SHT1x sht1x(dataPin, clockPin);
 
-//电源控制引脚，低开高关
-#define Air_CtrlPin 10
-#define Soil_CtrlPin 11
 
 #define bme280_error 0		//0000 0000
 #define CO2_error 1			//0000 0001

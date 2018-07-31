@@ -1,6 +1,5 @@
 ﻿#include "Oxygen.h"
 
-#define O2_preheat_time	60000		//预热时间1分钟
 bool O2_init_flag = 0;					//1为准备好了
 float calibration_voltage;	//校准后的电压
 #define O2_percentage 208.00
@@ -20,7 +19,6 @@ int O2_value()		//获取O2数据
 		}
 		sum = sum >> 6;
 		calibration_voltage = sum / O2_percentage;//获得校正系数
-		//SerialUSB.println(calibration_voltage);
 		return 208;						//校准成功
 	}
 	else

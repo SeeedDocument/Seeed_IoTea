@@ -131,12 +131,12 @@ void Fan(bool Fan_state)	//1为开风扇
 {
 	if (Fan_state) {
 		digitalWrite(Fan_pin, 0);	//开风扇
-		digitalWrite(2, 1);
+		//digitalWrite(2, 1);
 	}
 		
 	else {
 		digitalWrite(Fan_pin, 1);
-		digitalWrite(2, 0);
+		//digitalWrite(2, 0);
 	}
 		
 }

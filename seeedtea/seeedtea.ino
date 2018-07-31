@@ -77,8 +77,8 @@ void setup() {
 	pinMode(O2_pin, INPUT);
 	digitalWrite(Air_CtrlPin, 1);	//关电源
 	digitalWrite(Soil_CtrlPin, 1);
-	digitalWrite(2, 1);
-	delay(500);
+	digitalWrite(2, 1);				//单片机复位触发
+	delay(1000);
 	digitalWrite(2, 0);
 	Wire.begin();
 	SerialUSB.begin(9600);		//USB
@@ -104,6 +104,9 @@ void setup() {
 // the loop function runs over and over again until power down or reset
 void loop()
 {
+	digitalWrite(2, 1);				//单片机复位触发
+	delay(200);
+	digitalWrite(2, 0);
 	bool power_state;	//1为电池有电，0为电池没电
 	power_state = power_ctrl();
 	SerialUSB.print("power_state = ");
@@ -132,6 +135,9 @@ void loop()
 		digitalWrite(Soil_CtrlPin, 0);
 		delay(3000);
 		get_AllSensorData();
+		digitalWrite(2, 1);				//单片机复位触发
+		delay(200);
+		digitalWrite(2, 0);
 		SerialUSB.println("Sensor power off!");
 		digitalWrite(Air_CtrlPin, 1);	//关电源
 		digitalWrite(Soil_CtrlPin, 1);
@@ -141,9 +147,14 @@ void loop()
 	}
 	else
 	{
+		digitalWrite(Air_CtrlPin, 1);	//关电源
+		digitalWrite(Soil_CtrlPin, 1);
 		delay(6000);
 	}
 	SerialUSB.println("finish loop");
+	digitalWrite(2, 1);				//单片机复位触发
+	delay(200);
+	digitalWrite(2, 0);
 #else
 	delay(1000);
 #endif // SENSOR_RUN
@@ -157,18 +168,27 @@ void loop()
 
 bool get_AllSensorData()	//获取所有传感器的数据
 {
+	digitalWrite(2, 1);				//单片机复位触发
+	delay(200);
+	digitalWrite(2, 0);
 	unsigned long D_time;	//为Dust Sensor记录上电时间
 	D_time = millis();
 	SerialUSB.println("get_BME280_data");
 	get_BME280_data();
 	SerialUSB.println("get_CO2_data");
 	get_CO2_data();
+	digitalWrite(2, 1);				//单片机复位触发
+	delay(200);
+	digitalWrite(2, 0);
 	SerialUSB.println(get_Light_data());
 	
 	SerialUSB.println("get_O2_data");
 	get_O2_data();
 	SerialUSB.println("get_soil_data");
 	get_soil_data();
+	digitalWrite(2, 1);				//单片机复位触发
+	delay(200);
+	digitalWrite(2, 0);
 	SerialUSB.println("get_Dust_data");
 
 	/*****************************************************************/
@@ -183,6 +203,9 @@ bool get_AllSensorData()	//获取所有传感器的数据
 	}
 	get_Dust_data();
 	SerialUSB.println("get_Dust_data OK");
+	digitalWrite(2, 1);				//单片机复位触发
+	delay(200);
+	digitalWrite(2, 0);
 	//发送数据
 	return 1;
 	
@@ -288,13 +311,24 @@ int get_Light_data()
 	//获取光照传感器数据
 	//Lora_data[8_9]:光照
 	//错误代码Lora_data[14] bit3,1：error，0：no_error
+	unsigned long sum = 0;
+	char x = 0;
 	delay(2000);
 	TSL2561.init();
-	delay(100);
-	TSL2561_data = TSL2561.readVisibleLux();
-	//SerialUSB.println(TSL2561.readVisibleLux());
-	if ((TSL2561_data >= TSL2561_data_low) && (TSL2561_data <= TSL2561_data_high))//判断光照是否在正常范围
+	delay(500);
+	for (int i = 10; i > 0; i--)
 	{
+		TSL2561_data = TSL2561.readVisibleLux();
+		if ((TSL2561_data >= TSL2561_data_low) && (TSL2561_data <= TSL2561_data_high))//判断光照是否在正常范围
+		{
+			x++;
+			sum = sum + TSL2561_data;
+		}
+		delay(500);
+	}
+	if (x != 0)
+	{
+		TSL2561_data = sum / x;
 		Lora_data[8] = (unsigned  char)((TSL2561_data >> 8) & 0xff);//光照高8位
 		Lora_data[9] = (unsigned  char)(TSL2561_data & 0x00ff);		//光照低8位
 		Lora_data[14] = Lora_data[14] & (~(1 << light_error)); //错误位清0
@@ -308,7 +342,23 @@ int get_Light_data()
 		SerialUSB.println(TSL2561_data);
 		SerialUSB.println();
 	}
-	delay(1000);
+	//SerialUSB.println(TSL2561.readVisibleLux());
+	/*if ((TSL2561_data >= TSL2561_data_low) && (TSL2561_data <= TSL2561_data_high))//判断光照是否在正常范围
+	{
+		Lora_data[8] = (unsigned  char)((TSL2561_data >> 8) & 0xff);//光照高8位
+		Lora_data[9] = (unsigned  char)(TSL2561_data & 0x00ff);		//光照低8位
+		Lora_data[14] = Lora_data[14] & (~(1 << light_error)); //错误位清0
+	}
+	else
+	{
+		Lora_data[8] = 0;//光照高8位
+		Lora_data[9] = 0;//光照低8位
+		Lora_data[14] = Lora_data[14] | (1 << light_error); //错误位置1
+		SerialUSB.println("light_ERROR");
+		SerialUSB.println(TSL2561_data);
+		SerialUSB.println();
+	}*/
+	//delay(1000);
 	return TSL2561_data;
 	/*****************************************************************/
 }

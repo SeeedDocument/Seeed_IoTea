@@ -136,7 +136,7 @@ SoftwareSerial CO2_serial(5, 4);      // TX, RX
 #define dataPin 6   //土壤水分和温度传感器数据引脚
 #define clockPin 7  //土壤水分和温度传感器时钟引脚
 
-//POWER_Ctrl.cpp
+//POWER_Ctrl.h
 #define DS18B20_pin 8   //板载温度传感器
 #define Fan_pin 9       //风扇引脚
 #define Air_CtrlPin 10  //空气传感器控制引脚

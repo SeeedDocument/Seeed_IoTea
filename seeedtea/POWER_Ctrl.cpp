@@ -18,10 +18,6 @@
 #define Fan_start_temp 45
 #define Fan_start_light 500
 
-//电源控制引脚，低开高关
-#define Air_CtrlPin 10
-#define Soil_CtrlPin 11
-
 
 //电压都被放大10倍，例如126表示12.6V
 uint8_t Battery_voltage;

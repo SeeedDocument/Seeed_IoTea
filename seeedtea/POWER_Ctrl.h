@@ -13,6 +13,9 @@
 #define Solar_pin A3
 #define Battery_pin A2
 #define Fan_pin 9
+//电源控制引脚，低开高关
+#define Air_CtrlPin 10
+#define Soil_CtrlPin 11
 extern int TSL2561_data;	//光传感器数据
 void Fan(bool Fan_state);	//1为开风扇
 bool power_ctrl_init();		//初始化温度和电压读取。返回1为正常

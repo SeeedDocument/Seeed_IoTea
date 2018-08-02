@@ -4,7 +4,7 @@
 
 
 //温控风扇调试。如果装箱就注释掉。
-//#define FAN_ON
+#define FAN_ON
 
 #include "POWER_Ctrl.h"
 #include "OneWire.h"			//1线式通讯协议 库文件

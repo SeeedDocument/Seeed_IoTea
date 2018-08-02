@@ -19,6 +19,7 @@ float Dust_concentration(void) {
 	{
 		duration = pulseIn(Dust_pin, LOW);
 		lowpulseoccupancy = lowpulseoccupancy + duration;
+		Feed_dog();		//Œππ∑£¨Õ¨ ±…¡µ∆
 	}
 	//SerialUSB.print("lowpulseoccupancy=");
 	//SerialUSB.println(lowpulseoccupancy);

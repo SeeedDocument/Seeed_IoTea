@@ -10,7 +10,7 @@
 #endif
 extern void CO2_init(void);
 extern unsigned int CO2_dataRecieve(void);
-
+extern void Feed_dog(void);		//Œππ∑£¨Õ¨ ±…¡µ∆
 
 #endif
 

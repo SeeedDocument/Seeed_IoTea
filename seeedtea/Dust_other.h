@@ -12,6 +12,7 @@
 #define Dust_pin 3
 extern float Dust_concentration(void);
 extern int O2_value(void);
+extern void Feed_dog(void);		//Œππ∑£¨Õ¨ ±…¡µ∆
 
 
 #endif

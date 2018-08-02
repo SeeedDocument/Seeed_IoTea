@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="utility">
+      <UniqueIdentifier>{2ffdb179-5a78-4047-a100-f2911d29ce44}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="seeedtea.ino" />
@@ -57,6 +60,21 @@
     <ClInclude Include="OneWire_direct_regtype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Adafruit_SleepyDog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utility\WatchdogAVR.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="utility\WatchdogKinetisK.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="utility\WatchdogKinetisL.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="utility\WatchdogSAMD.h">
+      <Filter>utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CO2.cpp">
@@ -88,6 +106,21 @@
     </ClCompile>
     <ClCompile Include="OneWire.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Adafruit_SleepyDog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utility\WatchdogAVR.cpp">
+      <Filter>utility</Filter>
+    </ClCompile>
+    <ClCompile Include="utility\WatchdogKinetisK.cpp">
+      <Filter>utility</Filter>
+    </ClCompile>
+    <ClCompile Include="utility\WatchdogKinetisL.cpp">
+      <Filter>utility</Filter>
+    </ClCompile>
+    <ClCompile Include="utility\WatchdogSAMD.cpp">
+      <Filter>utility</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

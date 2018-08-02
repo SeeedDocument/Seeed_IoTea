@@ -1,11 +1,10 @@
 
 #include "CO2.h"
-#include <SoftwareSerial.h>
 int CO2PPM;
 int CO2_temp;
-#define co2_delay 3000		//两次读取数据的间隔
+#define co2_delay 2500		//两次读取数据的间隔
 
-SoftwareSerial CO2_serial(5, 4);      // TX, RX
+#define CO2_serial Serial1
 unsigned char data[9];
 const unsigned char cmd_get_sensor[] =		//send data to CO2 Sensor
 {
@@ -48,14 +47,15 @@ unsigned int CO2_dataRecieve(void)		//获取二氧化碳传感器的数据。返回0为错误
 }
 
 unsigned int get_co2() {			//获取一次传感器数据。返回0为数据错误
+	Feed_dog();		//喂狗，同时闪灯
 	unsigned int CO2PPM;
 	uint8_t i;
 	for (i = 0; i<sizeof(cmd_get_sensor); i++)
 	{
 		CO2_serial.write(cmd_get_sensor[i]);
-		delayMicroseconds(100);
+		//delayMicroseconds(100);
 	}
-
+	delay(100);
 	if (CO2_serial.available())
 	{
 		while (CO2_serial.available())
@@ -66,13 +66,13 @@ unsigned int get_co2() {			//获取一次传感器数据。返回0为数据错误
 			}
 		}
 	}
-	/*
+	
 	for (int j = 0; j < sizeof(data); j++) {
 		SerialUSB.print(data[j]);
 		SerialUSB.print("  ");
 	}
 	SerialUSB.println("  ");
-	*/
+	
 
 	if ((i != 9) || (1 + (0xFF ^ (byte)(data[1] + data[2] + data[3] + data[4] + data[5] + data[6] + data[7]))) != data[8])
 	{

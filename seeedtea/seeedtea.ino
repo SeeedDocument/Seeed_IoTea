@@ -4,13 +4,14 @@ Created:	2018/4/13 14:09:27
 Author:	zxd
 */
 
-/****** 看门狗定时器：#include "Adafruit_SleepyDog.h"
+/****** 看门狗定时器：#include "Adafruit_SleepyDog.h"*********
 * 使用看门狗进行自动复位
 * 看门狗最长喂狗周期16秒
 * 看门狗启动：Watchdog.enable(Dog_time);
 * 喂狗：Watchdog.reset();
 * 停止看门狗：Watchdog.disable();
 **************************************************/
+
 
 // the setup function runs once when you press reset or power the board
 #include "Adafruit_SleepyDog.h"		//看门狗库

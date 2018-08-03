@@ -62,6 +62,8 @@ Lora_data[14] = [bit7, bit6, bit5, bit4, bit3, bit2, bit1, bit0]
 - bit6：保留
 - bit7：保留
 
+另外本文件夹内有错误代码转换器：Error_code_transform.exe ，可以打开这个.exe文件并输入十六进制的错误代码，然后就得到了传感器错误类型。
+
 ## 2. 参数调节
 
 ### 1. 数据发送运行周期
@@ -130,7 +132,7 @@ I2C：SCL 和 SDA
 #define Dust_pin 3
 
 //CO2.cpp
-SoftwareSerial CO2_serial(5, 4);      // TX, RX
+#define CO2_serial Serial1    //CO2 传感器使用D0和D1硬件串口
 
 //seeedtea.ino
 #define dataPin 6   //土壤水分和温度传感器数据引脚
@@ -147,6 +149,48 @@ SoftwareSerial CO2_serial(5, 4);      // TX, RX
 //Oxygen.h
 #define O2_pin A1
 ```
+
+### 8. 看门狗定时器
+
+看门狗定时器用于监测系统运行状态，当系统运行异常时会复位单片机，从而使其可以长期不间断运行。
+
+需要引用的库：
+
+- Adafruit_SleepyDog.h            已经添加进项目中
+- Adafruit_ASFcore-master.zip     打包放在项目文件夹中，需要手动添加进Arduino IDE中
+
+#### 相关函数：
+
+##### 1. 使能看门狗
+
+```c
+int WatchdogSAMD::enable(int maxPeriodMS, bool isForSleep)
+```
+输入参数：
+- int maxPeriodMS：等待时间，单位毫秒。超时会复位。最大允许16000毫秒。
+
+返回值：
+- int类型，返回实际等待时间
+
+##### 2. 复位看门狗
+
+```c
+void WatchdogSAMD::reset()
+```
+
+输入参数：无
+
+输出参数：无
+
+调用该函数来复位看门狗定时器，简称“喂狗”。超出等待时间未复位就会使单片机重启。
+
+##### 3. 停止看门狗
+
+```c
+void WatchdogSAMD::disable()
+```
+
+停止看门狗定时器。
 
 ## 3. 传感器详细信息
 

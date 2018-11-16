@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{C5F80730-F44F-4478-BDAE-6634EFC2CA88}</ProjectGuid>
+    <RootNamespace>IoTea</RootNamespace>
+    <ProjectName>IoTea</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>
+    </PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>
+    </PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\IoTea;$(ProjectDir)..\..\..\..\..\AppData\Local\arduino15\packages\Seeeduino\hardware\Seeeduino_SAMD\1.2.0\libraries\Wire;$(ProjectDir)..\..\..\..\..\AppData\Local\arduino15\packages\Seeeduino\hardware\Seeeduino_SAMD\1.2.0\libraries\SoftwareSerial;D:\Program Files (x86)\Arduino\libraries\libraries\Adafruit_ASFcore-master;D:\Program Files (x86)\Arduino\libraries\libraries;D:\Program Files (x86)\Arduino\libraries;$(ProjectDir)..\..\..\..\..\AppData\Local\arduino15\packages\Seeeduino\hardware\Seeeduino_SAMD\1.2.0\libraries;$(ProjectDir)..\..\..\..\..\AppData\Local\arduino15\packages\Seeeduino\hardware\Seeeduino_SAMD\1.2.0\cores\arduino;$(ProjectDir)..\..\..\..\..\AppData\Local\arduino15\packages\Seeeduino\hardware\Seeeduino_SAMD\1.2.0\cores\arduino\avr;$(ProjectDir)..\..\..\..\..\AppData\Local\arduino15\packages\Seeeduino\hardware\Seeeduino_SAMD\1.2.0\cores\arduino\USB;$(ProjectDir)..\..\..\..\..\AppData\Local\arduino15\packages\Seeeduino\hardware\Seeeduino_SAMD\1.2.0\variants\arduino_zero;$(ProjectDir)..\..\..\..\..\AppData\Local\arduino15\packages\Seeeduino\tools\CMSIS\4.0.0-atmel\CMSIS\Include\;$(ProjectDir)..\..\..\..\..\AppData\Local\arduino15\packages\Seeeduino\tools\CMSIS\4.0.0-atmel\Device\ATMEL\;$(ProjectDir)..\..\..\..\..\AppData\Local\arduino15\packages\Seeeduino\hardware\Seeeduino_SAMD;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>$(ProjectDir)__vm\.IoTea.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <PreprocessorDefinitions>_VMDEBUG=1;F_CPU=48000000L;ARDUINO=10807;ARDUINO_SAMD_ZERO;ARDUINO_ARCH_SEEEDUINO_SAMD;__SAMD21G18A__;USB_VID=0x2886;USB_PID=0x800C;USBCON;__cplusplus=201103L;_VMICRO_INTELLISENSE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="VisualMicro" />
+  </ItemGroup>
+  <PropertyGroup>
+    <DebuggerFlavor>VisualMicroDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="IoTea.ino">
+      <FileType>CppCode</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="application\application.h" />
+    <ClInclude Include="application\interface\IApplication.h" />
+    <ClInclude Include="driver\Barometer.h" />
+    <ClInclude Include="driver\CO2Sensor.h" />
+    <ClInclude Include="driver\DustSensor.h" />
+    <ClInclude Include="driver\interface\IGrove.h" />
+    <ClInclude Include="driver\LightSensor.h" />
+    <ClInclude Include="driver\LoRaWan.h" />
+    <ClInclude Include="driver\O2Sensor.h" />
+    <ClInclude Include="driver\SoilSensor.h" />
+    <ClInclude Include="middleware\interface\IGetValue.h" />
+    <ClInclude Include="middleware\Sensor.h" />
+    <ClInclude Include="origin_driver\Adafruit_SleepyDog.h" />
+    <ClInclude Include="origin_driver\Digital_Light_TSL2561.h" />
+    <ClInclude Include="origin_driver\LoRaWan.h" />
+    <ClInclude Include="origin_driver\Seeed_BME280.h" />
+    <ClInclude Include="origin_driver\SHT1x.h" />
+    <ClInclude Include="origin_driver\utility\WatchdogSAMD.h" />
+    <ClInclude Include="origin_driver\Vector.h" />
+    <ClInclude Include="__vm\.IoTea.vsarduino.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="application\application.cpp" />
+    <ClCompile Include="driver\Barometer.cpp" />
+    <ClCompile Include="driver\CO2Sensor.cpp" />
+    <ClCompile Include="driver\DustSensor.cpp" />
+    <ClCompile Include="driver\LightSensor.cpp" />
+    <ClCompile Include="driver\LoRaWan.cpp" />
+    <ClCompile Include="driver\O2Sensor.cpp" />
+    <ClCompile Include="driver\SoilSensor.cpp" />
+    <ClCompile Include="origin_driver\Adafruit_SleepyDog.cpp" />
+    <ClCompile Include="origin_driver\Digital_Light_TSL2561.cpp" />
+    <ClCompile Include="origin_driver\LoRaWan.cpp" />
+    <ClCompile Include="origin_driver\Seeed_BME280.cpp" />
+    <ClCompile Include="origin_driver\SHT1x.cpp" />
+    <ClCompile Include="origin_driver\utility\WatchdogSAMD.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties arduino.upload.port="COM12" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

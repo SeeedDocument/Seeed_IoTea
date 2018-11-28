@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import boto3
 import os
@@ -19,19 +19,23 @@ while True:
 		filename = time.strftime('%Y%m%d-%H0000', localtime) + '.jpg'
 		
 		# Take photo
-		os.system("fswebcam --no-banner -r 1920x1080 {}".format(filename))
+		local_filename = '/home/rxhf/' + filename
+		os.system("fswebcam --no-banner -r 1920x1080 {}".format(local_filename))
 		
 		upload_path = 'files/iotea/{}s{}/{}'.format(year, season, filename)
 		
 		# Uploads the given file using a managed uploader, which will split up large
 		# files automatically and upload parts in parallel.
-		s3.upload_file(filename, bucket_name, upload_path)
-		print('Uploaded file to {}'.format(upload_path))
+		s3.upload_file(local_filename, bucket_name, upload_path)
+		#print('Uploaded file to {}'.format(upload_path))
+		os.system('echo Uploaded file to {} >> /home/rxhf/photo.log'.format(upload_path))
 		
 		# Remove local file
-		os.remove(filename)
-		print('Deleted local file {}'.format(filename))
-	except:
+		os.remove(local_filename)
+		#print('Deleted local file {}'.format(local_filename))
+		os.system('echo Deleted local file {} >> /home/rxhf/photo.log'.format(upload_path))
+	except e:
+		#print(e)
 		continue
 	finally:
 		time.sleep(60)

@@ -1,0 +1,28 @@
+#!/bin/bash
+# /etc/init.d/photo
+ 
+### BEGIN INIT INFO
+# Provides: seeed_photo
+# Required-Start: $remote_fs $syslog
+# Required-Stop: $remote_fs $syslog
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: photo taking initscript
+# Description: This service is used to manage photo taking
+### END INIT INFO
+ 
+case "$1" in
+    start)
+        echo "Start taking photo"
+        /home/rxhf/photo.py &
+        ;;
+    stop)
+        echo "Stop taking photo"
+        kill $(ps aux | grep -m 1 'python3 /home/rxhf/photo.py' | awk '{ print $2 }')
+        ;;
+    *)
+        echo "Usage: service photo start|stop"
+        exit 1
+        ;;
+esac
+exit 0
